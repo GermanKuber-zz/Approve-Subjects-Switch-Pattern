@@ -13,7 +13,8 @@ namespace ApproveSubjects.Tests
         private readonly Mock<Action<decimal>> _disapproveSubject = new Mock<Action<decimal>> { DefaultValue = DefaultValue.Mock };
         public SubjectShould()
         {
-            _sut = new Subject(_approveSubject.Object, _recoverySubject.Object, _disapproveSubject.Object);
+
+            _sut = new Subject(new RulesFactory().Create(_approveSubject.Object, _recoverySubject.Object, _disapproveSubject.Object));
         }
         [Fact]
         public void Suscribe_Subject()

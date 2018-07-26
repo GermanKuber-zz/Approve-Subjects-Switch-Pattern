@@ -1,42 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ApproveSubjects
+﻿namespace ApproveSubjects
 {
     public class Subject
     {
         private SubjectStatus _status;
-        private int _note ;
-        private readonly Dictionary<SubjectStatus, Action<decimal>> _subjectStatusActions;
-        public Subject(Action<decimal> approveSubject, Action<decimal> recoverySubject, Action<decimal> disapproveSubject)
+        private readonly SubjectNoContainer _note = new SubjectNoContainer();
+        private readonly SubjectStatusActions _subjectStatusActions;
+        public Subject(SubjectStatusActions subjectStatusActions)
         {
             _status = SubjectStatus.Suscribe();
-            _subjectStatusActions = new Dictionary<SubjectStatus, Action<decimal>>
-            {
-                [SubjectStatus.Suscribe().ApproveExams().DeliveredPracticalWorks().ApproveFinalExam()] = approveSubject,
-                [SubjectStatus.Suscribe().DeliveredPracticalWorks().ApproveExams()] = recoverySubject,
-                [SubjectStatus.Suscribe().DeliveredPracticalWorks()] = recoverySubject,
-                [SubjectStatus.Suscribe()] = disapproveSubject,
-            };
+            _subjectStatusActions = subjectStatusActions;
         }
 
-        public void GivePracticalWork()
-        {
+        public void GivePracticalWork()=>
             _status = _status.DeliveredPracticalWorks();
-        }
-        public void GiveExam(SubjectNote note)
-        {
-            _note += note.Note;
-            _status = note.CheckNote(_status.ApproveExams, _status.DisapproveExam);
-        }
-        public void GiveFinalExam(SubjectNote note)
-        {
-            _note += note.Note;
-            _status = note.CheckNote(_status.ApproveFinalExam, _status.DisapproveFinalExam);
-        }
-        public void CloseSubject()
-        {
-            _subjectStatusActions[_status].Invoke(_note);
-        }
+
+        public void GiveExam(SubjectNote note) =>
+            _status = _note.Add(note, () => note.CheckNote(_status.ApproveExams, _status.DisapproveExam));
+
+        public void GiveFinalExam(SubjectNote note) =>
+            _status = _note.Add(note, () => note.CheckNote(_status.ApproveFinalExam, _status.DisapproveFinalExam));
+
+        public void CloseSubject() => _subjectStatusActions.Execute(_status).Invoke(_note.Note);
     }
 }
