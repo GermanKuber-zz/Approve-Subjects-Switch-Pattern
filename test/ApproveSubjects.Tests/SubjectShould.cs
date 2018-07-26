@@ -53,7 +53,7 @@ namespace ApproveSubjects.Tests
             _approveSubject.Verify(x => x(6 + 8), Times.AtLeastOnce);
         }
         [Fact]
-        public void Receives_Final_Exam_Work2()
+        public void Receives_Disapprove_Final_Exam()
         {
             _sut.GivePracticalWork();
             _sut.GiveExam(SubjectExamNote.Create(6));

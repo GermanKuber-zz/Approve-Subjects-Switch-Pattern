@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApproveSubjects\ApproveSubjects.csproj" />
+    <ProjectReference Include="..\..\src\ApproveSubjects\ApproveSubjects.csproj" />
   </ItemGroup>
 
 </Project>
